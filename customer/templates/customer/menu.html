@@ -1,0 +1,42 @@
+{% extends 'customer/base.html' %}
+
+{% block content %}
+<div class="container">
+  <h1 style="font-weight: bold; font-style: italic; color: rgb(98, 98, 241); text-align: center;">Our Menu</h1>
+
+
+    <form method="post" action="{% url 'order_now' %}">
+        {% csrf_token %}
+        <h2 style="font-weight: bold; font-style: italic; color: blue;">Appetizers</h2>
+        {% for item in appetizers %}
+            <div>
+                <input type="checkbox" name="menu_item" value="{{ item.id }}" id="appetizer-{{ item.id }}">
+                <label for="appetizer-{{ item.id }}">{{ item.name }} - ${{ item.price }}</label>
+            </div>
+        {% endfor %}
+
+        <h2 style="font-weight: bold; font-style: italic; color: blue;">Main Courses</h2>
+        {% for item in main_courses %}
+            <div>
+                <input type="checkbox" name="menu_item" value="{{ item.id }}" id="main-course-{{ item.id }}">
+                <label for="main-course-{{ item.id }}">{{ item.name }} - ${{ item.price }}</label>
+            </div>
+        {% endfor %}
+
+        <h2 style="font-weight: bold; font-style: italic; color: blue;">Desserts</h2>
+        {% for item in desserts %}
+            <div>
+                <input type="checkbox" name="menu_item" value="{{ item.id }}" id="dessert-{{ item.id }}">
+                <label for="dessert-{{ item.id }}">{{ item.name }} - ${{ item.price }}</label>
+            </div>
+        {% endfor %}
+
+        <h2 style="font-weight: bold; font-style: italic; color: blue;">Drinks</h2>
+        {% for item in drinks %}
+            <div>
+                <input type="checkbox" name="menu_item" value="{{ item.id }}" id="drinks-{{ item.id }}">
+                <label for="drinks-{{ item.id }}">{{ item.name }} - ${{ item.price }}</label>
+           </div>
+        {% endfor %}
+    
+{% endblock content %}

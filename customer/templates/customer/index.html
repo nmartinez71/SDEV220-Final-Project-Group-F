@@ -1,18 +1,98 @@
-{% extends 'customer/base.html' %}
+<!-- Include Bootstrap CSS & JS -->
+<link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
-{% block content %}
-<div class="container mb-5">
-    <div class="row justify-content-center mt-5">
-        <div class="col-md-8 col-sm-12 offset-md-1 p-4 text-center">
-            <h1>Online Food System</h1>
-        </div>
-    </div>
-    <div class="row justify-content-center mt-1">
-        <div class="card col-md-5 col-sm-12 offset-md-1 p-4 text-center">
-            <h2>Place Order</h2>
-            <button class="btn btn-outline-primary">Order Now</button>
-        </div>
-    </div>
+<!-- Navigation Bar -->
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <a class="navbar-brand" href="{% url 'index' %}">Deliver</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="collapse navbar-collapse" id="navbarSupportedContent">
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'menu' %}">Menu</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'about' %}">About</a>
+      </li>
+    </ul>
+  </div>
+</nav>
+
+<!-- Centralized Content Body -->
+<div class="d-flex align-items-center justify-content-center" style="height: 100vh;">
+  <button class="btn btn-primary" data-toggle="modal" data-target="#orderModal">Place an Order!</button>
 </div>
-        
-{% endblock content %}
+
+<!-- Order Now Modal -->
+<div class="modal fade" id="orderModal" tabindex="-1" aria-labelledby="orderModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="orderModalLabel">Place Your Order</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form method="post" action="{% url 'order_now' %}">
+            {% csrf_token %}
+            
+            <!-- Food Item Selection -->
+            <div class="form-group">
+                <label for="foodItem">Select Food Items</label>
+                <select class="form-control" id="foodItem" name="food_item" multiple required>
+                    {% for item in available_items %}
+                        <option value="{{ item.id }}">{{ item.name }} - ${{ item.price }}</option>
+                    {% empty %}
+                        <option disabled>No food items available</option>
+                    {% endfor %}
+                </select>
+            </div>
+    
+            <!-- Quantity Fields (dynamically added) -->
+            <div class="form-group" id="quantityContainer">
+                <label for="quantity">Quantity</label>
+                <!-- Quantity input fields will be added here by JavaScript -->
+            </div>
+    
+            <button type="submit" class="btn btn-success">Submit Order</button>
+        </form>
+    </div>
+    
+    <script>
+        // Function to dynamically create quantity fields for selected food items
+        document.getElementById('foodItem').addEventListener('change', function() {
+            var selectedItems = Array.from(this.selectedOptions);
+            var quantityContainer = document.getElementById('quantityContainer');
+            
+            // Clear any existing quantity fields
+            quantityContainer.innerHTML = '';
+    
+            // Add a quantity input for each selected food item
+            selectedItems.forEach(function(item, index) {
+                var itemId = item.value;
+                var itemName = item.textContent;
+    
+                // Create quantity label and input field
+                var label = document.createElement('label');
+                label.setAttribute('for', 'quantity_' + itemId);
+                label.textContent = 'Quantity for ' + itemName;
+    
+                var input = document.createElement('input');
+                input.setAttribute('type', 'number');
+                input.setAttribute('name', 'quantity_' + itemId);  // Unique name for each item
+                input.setAttribute('min', '1');
+                input.setAttribute('value', '1');
+                input.classList.add('form-control');
+    
+                // Append label and input to the container
+                quantityContainer.appendChild(label);
+                quantityContainer.appendChild(input);
+                quantityContainer.appendChild(document.createElement('br'));  // Line break between items
+            });
+        });
+    </script>
