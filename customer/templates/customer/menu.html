@@ -1,42 +1,37 @@
 {% extends 'customer/base.html' %}
 
 {% block content %}
-<div class="container">
-  <h1 style="font-weight: bold; font-style: italic; color: rgb(98, 98, 241); text-align: center;">Our Menu</h1>
+    <div class="row justify-content-center mt-5">
+        <div class="col-md-6 col-sm-12 text-center text-white">
+            <h1>Menu</h1>
+        </div>
+    </div>
+    <div class="row justify-content-center mt-5">
+        <div class="col-md-8 col-sm-12 text-center text-white light">
+            <form method="GET" action="{% url 'menu-search' %}">
+                <div class="md-form mt-0 active-cyan-2">
+                    <input class="form-control" name="q" type="text" placeholder="Search Our Menu" aria-label="Search" value="{{ request.GET.q }}" style="color: white;">
+                </div>
+            </form>
+        </div>
+    </div>    
 
+    <div class="container mt-5" style="padding-bottom: 100px;">
+        <div class="row">
+            {% for item in menu_items %}
+                <div class="col-md-3 col-sm-6 mb-4">
+                    <div class="card bg-dark rounded-lg" style="height: 100%;">
 
-    <form method="post" action="{% url 'order_now' %}">
-        {% csrf_token %}
-        <h2 style="font-weight: bold; font-style: italic; color: blue;">Appetizers</h2>
-        {% for item in appetizers %}
-            <div>
-                <input type="checkbox" name="menu_item" value="{{ item.id }}" id="appetizer-{{ item.id }}">
-                <label for="appetizer-{{ item.id }}">{{ item.name }} - ${{ item.price }}</label>
-            </div>
-        {% endfor %}
+                        <img class="card-img-top rounded-lg" src="{{ item.image.url }}" alt="{{ item.name }}" style="height: 200px; object-fit: cover;">
 
-        <h2 style="font-weight: bold; font-style: italic; color: blue;">Main Courses</h2>
-        {% for item in main_courses %}
-            <div>
-                <input type="checkbox" name="menu_item" value="{{ item.id }}" id="main-course-{{ item.id }}">
-                <label for="main-course-{{ item.id }}">{{ item.name }} - ${{ item.price }}</label>
-            </div>
-        {% endfor %}
-
-        <h2 style="font-weight: bold; font-style: italic; color: blue;">Desserts</h2>
-        {% for item in desserts %}
-            <div>
-                <input type="checkbox" name="menu_item" value="{{ item.id }}" id="dessert-{{ item.id }}">
-                <label for="dessert-{{ item.id }}">{{ item.name }} - ${{ item.price }}</label>
-            </div>
-        {% endfor %}
-
-        <h2 style="font-weight: bold; font-style: italic; color: blue;">Drinks</h2>
-        {% for item in drinks %}
-            <div>
-                <input type="checkbox" name="menu_item" value="{{ item.id }}" id="drinks-{{ item.id }}">
-                <label for="drinks-{{ item.id }}">{{ item.name }} - ${{ item.price }}</label>
-           </div>
-        {% endfor %}
-    
+                        <div class="card-body d-flex flex-column">
+                            <h5 class="card-title text-white">{{ item.name }}</h5> 
+                            <p class="card-text">Price: ${{ item.price }}</p> 
+                            <p class="card-text">{{ item.description }}</p>  
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
 {% endblock content %}
